@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
 .main {
-  justify-content: center;
+  justify-content: flex-start;
   display: flex;
   align-items: center;
   height: 100vh;
@@ -15,4 +15,8 @@
   color: whitesmoke !important;
   font-family: "Montserrat", sans-serif;
   font-size: 12px !important;
+}
+
+.title {
+  text-align: center;
 }

@@ -26,6 +26,7 @@ const Read = () => {
       });
     console.log(`data being deleted: id ${id}`);
   };
+
   const [APIData, setAPIData] = useState([]);
   useEffect(() => {
     axios
