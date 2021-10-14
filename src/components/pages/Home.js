@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUsers, deleteUser } from "../../redux/action";
+import { loadUsers, deleteUser, setUser } from "../../redux/action";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -20,7 +20,7 @@ const Home = () => {
   console.log("user data", users);
 
   useEffect(() => {
-    // dispatch(loadUsers());
+    dispatch(loadUsers());
   }, [dispatch]);
 
   const refreshData = () => {
@@ -33,14 +33,26 @@ const Home = () => {
     }
   };
 
+  const handleUpdate = (user) => {
+    dispatch(setUser(user));
+    console.log("update user", user);
+    history.push("/add");
+  };
+
   return (
     <div>
       <h1 className={"title"}>DATA PEGAWAI</h1>
-      <Button onClick={() => refreshData()} variant="contained" color="primary">
+      <Button
+        sx={{ margin: "0em 1em 1em 0em" }}
+        onClick={() => refreshData()}
+        variant="contained"
+        color="primary"
+      >
         Refresh&nbsp;
         <RefreshIcon />
       </Button>
       <Button
+        sx={{ marginBottom: "1em" }}
         onClick={() => history.push("/add")}
         variant="contained"
         color="primary"
@@ -54,8 +66,7 @@ const Home = () => {
             <TableRow>
               <TableCell>No</TableCell>
               <TableCell align="left">Nama</TableCell>
-              <TableCell align="left">Pekerjaan</TableCell>
-              <TableCell align="left">Alamat</TableCell>
+              <TableCell align="left">Kelurahan</TableCell>
               <TableCell align="left">Kecamatan</TableCell>
               <TableCell align="left">Kabupaten</TableCell>
               <TableCell align="left">Provinsi</TableCell>
@@ -64,28 +75,24 @@ const Home = () => {
           </TableHead>
           <TableBody>
             {users &&
-              users.map((user) => (
+              users.map((user, index) => (
                 <TableRow
-                  key={user.id}
+                  key={index}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {user.id}
+                    {user?.id}
                   </TableCell>
-                  <TableCell align="left">{user.firstName}</TableCell>
-                  <TableCell align="left">{user.job}</TableCell>
-                  <TableCell align="left">{user.address}</TableCell>
-                  <TableCell align="left">{user.kecamatan}</TableCell>
-                  <TableCell align="left">{user.kabupaten}</TableCell>
-                  <TableCell align="left">{user.provinsi}</TableCell>
+                  <TableCell align="left">{user?.nama}</TableCell>
+                  <TableCell align="left">{user?.kelurahan?.nama}</TableCell>
+                  <TableCell align="left">{user?.kecamatan?.nama}</TableCell>
+                  <TableCell align="left">{user?.kabupaten?.nama}</TableCell>
+                  <TableCell align="left">{user?.provinsi?.nama}</TableCell>
                   <TableCell align="left">
                     <Button onClick={() => handleDelete(user.id)} color="error">
                       Delete
                     </Button>
-                    <Button
-                      onClick={() => handleDelete(user.id)}
-                      color="primary"
-                    >
+                    <Button onClick={() => handleUpdate(user)} color="primary">
                       Update
                     </Button>
                   </TableCell>

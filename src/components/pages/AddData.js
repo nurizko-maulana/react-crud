@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import {
   loadProvinsi,
   loadKabupaten,
   loadKecamatan,
   loadKelurahan,
+  addUser,
+  updateUser,
 } from "../../redux/action";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,21 +18,51 @@ import Typography from "@mui/material/Typography";
 
 function AddData() {
   let dispatch = useDispatch();
-  const { provinsi, kabupaten, kecamatan, kelurahan } = useSelector(
+  let history = useHistory();
+  const { provinsi, kabupaten, kecamatan, kelurahan, edit, user } = useSelector(
     (state) => state.data
   );
 
   const handleSubmit = () => {
-    console.log(name);
-    console.log(selectedProvince);
-    console.log(selectedKabupaten);
-    console.log(selectedKecamatan);
-    console.log(selectedKelurahan);
+    dispatch(
+      addUser({
+        nama: name,
+        provinsi: selectedProvince,
+        kabupaten: selectedKabupaten,
+        kecamatan: selectedKecamatan,
+        kelurahan: selectedKelurahan,
+      })
+    );
+    history.push("/");
+  };
+  const handleUpdate = () => {
+    console.log("handle update button", name);
+    dispatch(
+      updateUser({
+        id: user.id,
+        nama: name,
+        provinsi: selectedProvince,
+        kabupaten: selectedKabupaten,
+        kecamatan: selectedKecamatan,
+        kelurahan: selectedKelurahan,
+      })
+    );
+    history.push("/");
   };
 
   useEffect(() => {
     dispatch(loadProvinsi());
-  }, [dispatch]);
+    if (edit) {
+      dispatch(loadKabupaten(user.kabupaten.id_provinsi));
+      dispatch(loadKecamatan(user.kecamatan.id_kota));
+      dispatch(loadKelurahan(user.kabupaten.id_Kecamatan));
+      setName(user.nama);
+      setProvince(user.provinsi);
+      setKabupaten(user.kabupaten);
+      setKecamatan(user.kecamatan);
+      setKelurahan(user.kelurahan);
+    }
+  }, [dispatch, edit, user]);
 
   const [name, setName] = React.useState("");
   const [selectedProvince, setProvince] = React.useState({});
@@ -39,7 +72,7 @@ function AddData() {
 
   return (
     <div>
-      <h1 className={"title"}>Tambah Data Baru</h1>
+      <h1 className={"title"}>{edit ? "Update Data" : "Tambah Data Baru"}</h1>
       <Box
         sx={{
           padding: "2em",
@@ -79,9 +112,6 @@ function AddData() {
           onChange={(event, value) => {
             if (value === null) {
               setProvince("");
-              setKabupaten("");
-              setKecamatan("");
-              setKelurahan("");
               dispatch(loadKabupaten(null));
               dispatch(loadKecamatan(null));
               dispatch(loadKelurahan(null));
@@ -89,6 +119,9 @@ function AddData() {
               setProvince(value);
               dispatch(loadKabupaten(value.id));
             }
+            setKabupaten("");
+            setKecamatan("");
+            setKelurahan("");
           }}
           sx={{ width: 300, marginBottom: "1em" }}
           renderInput={(params) => <TextField {...params} label="Provinsi" />}
@@ -101,14 +134,14 @@ function AddData() {
           onChange={(event, value) => {
             if (value === null) {
               setKabupaten("");
-              setKecamatan("");
-              setKelurahan("");
               dispatch(loadKecamatan(null));
               dispatch(loadKelurahan(null));
             } else {
               setKabupaten(value);
               dispatch(loadKecamatan(value.id));
             }
+            setKecamatan("");
+            setKelurahan("");
           }}
           id="combo-box-demo"
           options={kabupaten}
@@ -125,12 +158,12 @@ function AddData() {
           onChange={(event, value) => {
             if (value === null) {
               setKecamatan("");
-              setKelurahan("");
               dispatch(loadKelurahan(null));
             } else {
               setKecamatan(value);
               dispatch(loadKelurahan(value.id));
             }
+            setKelurahan("");
           }}
           sx={{ width: 300, marginBottom: "1em" }}
           renderInput={(params) => <TextField {...params} label="Kecamatan" />}
@@ -154,10 +187,10 @@ function AddData() {
         />
         <Button
           variant="contained"
-          onClick={handleSubmit}
+          onClick={edit ? handleUpdate : handleSubmit}
           sx={{ marginTop: "1em" }}
         >
-          Sumbit
+          {edit ? "UPDATE" : "SUMBIT"}
         </Button>
       </Box>
     </div>

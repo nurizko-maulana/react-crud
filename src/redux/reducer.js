@@ -2,6 +2,7 @@ import * as types from "./actionTypes";
 const initialState = {
   users: [],
   user: {},
+  edit: false,
   loading: false,
   provinsi: [],
   kabupaten: [],
@@ -17,10 +18,32 @@ const userReducers = (state = initialState, action) => {
         users: action.payload,
         loading: false,
       };
+    case types.ADD_USER:
+      return {
+        ...state,
+        users: [...state.users, action.payload],
+        loading: false,
+      };
+    case types.UPDATE_USER:
+      return {
+        ...state,
+        users: [...state.users, action.payload],
+        user: {},
+        edit: false,
+
+        loading: false,
+      };
     case types.DELETE_USER:
       return {
         ...state,
         loading: false,
+      };
+    case types.SET_USER:
+      return {
+        ...state,
+        loading: false,
+        user: action.payload,
+        edit: true,
       };
     case types.SET_LOADING_TRUE:
       return {

@@ -9,6 +9,12 @@ const getUsers = (users) => ({
 const userDeleted = () => ({
   type: types.DELETE_USER,
 });
+const userAdded = () => ({
+  type: types.ADD_USER,
+});
+const userUpdated = () => ({
+  type: types.UPDATE_USER,
+});
 
 const setLoading = () => ({
   type: types.SET_LOADING_TRUE,
@@ -31,6 +37,16 @@ const setKelurahan = (kelurahan) => ({
   payload: kelurahan,
 });
 
+const userSetted = (user) => ({
+  type: types.SET_USER,
+  payload: user,
+});
+
+export const setUser = (user) => {
+  return function (dispatch) {
+    dispatch(userSetted(user));
+  };
+};
 export const loadProvinsi = () => {
   return function (dispatch) {
     axios
@@ -102,6 +118,32 @@ export const deleteUser = (id) => {
       .then((res) => {
         console.log("res", res.data);
         dispatch(userDeleted());
+        dispatch(loadUsers());
+      })
+      .catch((error) => console.log(error));
+  };
+};
+export const addUser = (data) => {
+  return function (dispatch) {
+    axios
+      .post(`${process.env.REACT_APP_API}`, data)
+      .then((res) => {
+        console.log("res", res.data);
+        console.log(data);
+        dispatch(userAdded());
+        dispatch(loadUsers());
+      })
+      .catch((error) => console.log(error));
+  };
+};
+export const updateUser = (data) => {
+  return function (dispatch) {
+    axios
+      .put(`${process.env.REACT_APP_API + "/" + data.id}`, data)
+      .then((res) => {
+        console.log("update response", res.data);
+        console.log("update data", data);
+        dispatch(userUpdated());
         dispatch(loadUsers());
       })
       .catch((error) => console.log(error));
